@@ -7,12 +7,19 @@ services:
     ports:
       - "11434:11434"
     volumes:
-      - ./ollama_data:/root/.ollama
-    deploy:
-      resources:
-        reservations:
-          devices:
-            - driver: nvidia
-              count: 1
-              capabilities: [gpu]
+      - ollama_data:/root/.ollama
     restart: unless-stopped
+
+  backend:
+    build: ./backend
+    container_name: black-hole-backend
+    ports:
+      - "8000:8000"
+    depends_on:
+      - ollama
+    volumes:
+      - ./web2.html:/web2.html:ro
+    restart: unless-stopped
+
+volumes:
+  ollama_data:
